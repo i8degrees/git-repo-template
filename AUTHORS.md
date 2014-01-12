@@ -1,3 +1,3 @@
 # Contributing Authors #
 
-Jeffrey Carpenter <jeffrey.carp@gmail.com>
+Jeffrey Carpenter <i8degrees@gmail.com>
