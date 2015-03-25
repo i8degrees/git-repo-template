@@ -2,13 +2,13 @@
 build
 third-party
 
-# Misc
+# temporary project data
 *.bck
 tmp
 
 # OS X Finder metadata
-*.DS_Store
+.DS_Store
 .LSOverride
 
-# Sublime Project metadata
-*.sublime-workspace
+# Sublime Text metadata
+.sublime-workspace
