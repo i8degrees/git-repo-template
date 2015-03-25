@@ -1,0 +1,21 @@
+# travis-ci build script for PROJECT_TEMPLATE
+
+os:
+  - osx
+
+language: objective-c
+
+compiler:
+  - clang
+
+before_install:
+  - brew update
+
+before_script:
+  # Make directories, generate cmake files, etc.
+
+script:
+  # exec make, xcodebuild or whatever
+
+notifications:
+  email: true
