@@ -1,11 +1,6 @@
-# TEMPLATE_PROJECT
+# TEMPLATE
 
-...
+## Projects Using TEMPLATE
 
-## Projects Using TEMPLATE_PROJECT
+## Related Projects
 
-...
-
-## Dependencies
-
-...

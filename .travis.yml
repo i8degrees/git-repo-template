@@ -1,4 +1,7 @@
 # travis-ci build script for PROJECT_TEMPLATE
+#
+# See also,
+#   1. http://explainshell.com/
 
 os:
   - osx
