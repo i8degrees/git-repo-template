@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="X-Robots-Tag" content="unavailable_after: 30-Jun-2018 15:00:00 PST">
+   <title>CS107 Guide to makefiles</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+   
+    <link href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/assets/stylesheet.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+
+    <script>
+      (function() {
+        var cx = '003265255082301896483:sq5n7qoyfh8';
+        var gcse = document.createElement('script');
+        gcse.type = 'text/javascript';
+        gcse.async = true;
+        gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//www.google.com/cse/cse.js?cx=' + cx;
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(gcse, s);
+      })();
+    </script>
+  </head>
+
+  <body>
+
+      <div class="navbar navbar-custom" role="navigation">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/index.html">CS107 Spring 2018 (archived)</a>
+        </div>
+        <div class="navbar-collapse collapse">
+        
+  <ul class="nav navbar-nav">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Course materials <span class="glyphicon glyphicon-triangle-bottom"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/admin.html">Admin</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/syllabus.html">Syllabus</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/labs.html">Labs</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/assignments.html">Assignments</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/exams.html">Exams</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/cgi-bin/gradebook">Gradebook</a></li>
+      </ul>
+    </li>
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Getting help <span class="glyphicon glyphicon-triangle-bottom"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/faq.html">FAQ</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/officehours.html">Office hours</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/forum_email.html">Forum & email</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/resources.html">Essential resources</a></li>
+        <li><a href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/unixref/">Unix reference</a></li>
+     </ul>
+    </li>
+  </ul>
+
+<ul class="nav navbar-nav navbar-right">
+  <li>
+    <form class="navbar-form navbar-right" id="search-query" action="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/search">
+      <div class="form-group"><input type="text" class="form-control input-sm" size="17" placeholder="Search CS107 site" name="q"></div>
+      <button type="submit" class="btn btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+    </form>
+  </li>
+</ul>
+
+        </div>
+    </div>
+
+    <div class="container">
+      <div id="title">Guide to makefiles</div>
+      <div id="main">
+
+
+
+
+
+  <div class="col-lg-11 col-md-11 col-sm-11 col-xs-12" id="main_for_toc">
+    
+<p id="attribution">Written by Kevin Montag, CS107 TA</p>
+<p>Makefiles are the Unix programmer's way of managing the build process for a project. Programming IDEs like Visual Studio store obscure configuration files based on selections in a series of disjointed and convoluted settings menus. The Unix programmer, on the other hand, keeps things clean, storing a lightweight and easily-modified text file (with an admittedly disjointed and convoluted syntax) directly in the project directory. A well-written makefile describes all the files and settings used to compile a project and link it with the appropriate libraries, and makes compilation trivial from the command line.</p>
+<h1 id="howwhy-to-use-a-makefile">How/why to use a makefile</h1>
+<p>For simple projects with uncomplicated settings, you can build without a makefile by directly invoking the compiler, e.g. <code>gcc file1.c file2.c file3.c</code> compiles three files and links them together into an executable named <code>a.out</code>. You could add flags such as <code>-Wall</code> (for warnings) or <code>-std=c99</code> (to use the updated C99 specification), or <code>-o [name]</code> to set the name of the resulting executable. However, manually re-typing these compilation commands quickly becomes tedious as projects get even slightly complex, and it is easy to mistype or be inconsistent. Managing the build with a makefile is much more convenient and less error-prone and far simpler after a one-time setup cost.</p>
+<p>Using makefiles is simple. The command <code>make</code> invokes the make program which reads in the file <code>Makefile</code> from the current directory and executes the build commands necessary to build the default target. You can also name just the specific target you want to build, such as <code>make myprogram</code>. The special target <code>make clean</code> will remove any previously built products and let you start fresh. The makefile itself contains the "recipe" information that specifies the steps required to build a given target, including what dependencies it has, what subproducts must be built in what sequence, what flags to pass to their various tools, and so on.</p>
+<p>A makefile with a proper dependency graph will only rebuild a target when one or more of the components it depends on has changed. This allows separating the components of a project which can be built independently. For example, some program you're working on might make use of a vector and a linked-list that you've implemented, neither of which makes any reference to the other in its implementation. Good design sense places the code for these structures in separate files, say <code>vector.c/h</code> and <code>list.c/h</code> . If you make a change to <code>vector.c</code> , nothing about <code>list.c/h</code> changes with it - the content of these files stays the same, and in a deeper sense, the <em>code generated</em> by <code>list.c/h</code> will be no different after modifying the vector implementation. Thus, if we've previously compiled the project, it's possible to set things up so that we can recompile the project (encompassing our changes to <code>vector.c</code> ) without recompiling the code in <code>list.c/h</code> . In this toy example, the performance gain is minimal, but in large-scale real-world projects, these sorts of optimizations can save literally hours of compilation time whenever a project is built. Makefiles help us to automatically separate generated code for distinct components of a project, and automatically decide which portions of a project need to be built when we want to compile.</p>
+<p>All CS107 projects will be distributed with a pre-written Makefile which you will typically use as-is, but occasionally you will have reason to poke around in it and make minor changes. You don't need to read the rest of this guide to be a happy and productive user of <code>make</code>, but if you are curious about how it works and someday aspire to construct your own Makefiles, read on.</p>
+<h1 id="how-to-write-a-makefile">How to write a makefile</h1>
+<p>The makefile syntax is known for having something of a learning curve, and it is common practice to copy and modify old makefiles, rather than generating new ones from scratch. The best way to get a sense for what's going on is to dive right in with an example. Below is a simple makefile that might be used to build a project:</p>
+<pre><code>#
+# A simple makefile for managing build of project composed of C source files.
+#
+
+
+# It is likely that default C compiler is already gcc, but explicitly
+# set, just to be sure
+CC = gcc
+
+# The CFLAGS variable sets compile flags for gcc:
+#  -g        compile with debug information
+#  -Wall     give verbose compiler warnings
+#  -O0       do not optimize generated code
+#  -std=c99  use the C99 standard language definition
+CFLAGS = -g -Wall -O0 -std=c99
+
+# The LDFLAGS variable sets flags for linker
+#  -lm   says to link in libm (the math library)
+LDFLAGS = -lm
+
+# In this section, you list the files that are part of the project.
+# If you add/change names of source files, here is where you
+# edit the Makefile.
+SOURCES = demo.c vector.c map.c
+OBJECTS = $(SOURCES:.c=.o)
+TARGET = demo
+
+
+# The first target defined in the makefile is the one
+# used when make is invoked with no argument. Given the definitions
+# above, this Makefile file will build the one named TARGET and
+# assume that it depends on all the named OBJECTS files.
+
+$(TARGET) : $(OBJECTS)
+    $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+# Phony means not a "real" target, it doesn't build anything
+# The phony target "clean" is used to remove all compiled object files.
+
+.PHONY: clean
+
+clean:
+    @rm -f $(TARGET) $(OBJECTS) core
+</code></pre>
+<p>Let's go through this makefile and see what's there. Note that lines beginning with '#' are comments, and are ignored when the makefile is processed.</p>
+<h1 id="macros">Macros</h1>
+<p>These are the substitutions defined toward the top of the makefile (lines that look like <code>CFLAGS = -g -Wall</code>). They are similar to <code>#define</code> statements in C, and should be used for any expression which is likely to be used repeatedly in a makefile. Once a macro has been assigned, we can reference it later using <code>$(MACRO_NAME)</code> (e.g. <code>$(CFLAGS)</code> in the example above). When we type <code>make</code> in a terminal, the file parser will simply replace these macro references with the assigned content.</p>
+<p>In our sample makefile, there are also a few macros whose values may not be obvious. The line <code>OBJECTS = $(SOURCES:.c=.o)</code> defines the <code>OBJECTS</code> macro to be the same as the <code>SOURCES</code> macro, except that every instance of '.c' is replaced with '.o' - that is, this assignment is equivalent to <code>OBJECTS = demo.o vector.o map.o</code>. There are also two built-in macros used by the makefile, <code>$@</code> and <code>$^</code>; these evaluate to <code>demo</code> and <code>demo.o vector.o map.o</code>, respectively, but we will need to learn a bit about targets before we find out why.</p>
+<p>For clarity, it may be worth looking at the content of the makefile as the parser "sees" it, with comments removed and macros fully expanded. In this form, our sample makefile looks like:</p>
+<pre><code>demo : demo.o vector.o map.o
+    gcc -g -Wall -o demo demo.o vector.o map.o -lm
+
+.PHONY: clean
+
+clean:
+    @rm -f demo demo.o vector.o map.o core
+</code></pre>
+<h1 id="targets">Targets</h1>
+<p>Following our makefile's macro definitions, we see a number of targets. Targets and their associated actions are written in the form:</p>
+<pre><code>target-name : dependencies
+    action
+</code></pre>
+<p>The target name is generally the name of the file that will be produced when this target is built. The first target listed in a makefile is the default target, meaning that it is the target which is built when <code>make</code> is invoked with no arguments; other targets can be built using <code>make [target-name]</code> at the command line. It is also worth mentioning at this point that the Make utility recognizes a number of implicit targets, and in particular that each of our object files has an associated implicit target equivalent to:</p>
+<pre><code>[filename].o : [filename].c
+    $(CC) $(CFLAGS) -o [filename].o [filename].c
+</code></pre>
+<p>Much of the power of the Make utility comes from its handling of dependencies. The dependencies of a target are the files which need to exist and be up to date before the target itself can be built. In the example above, the <code>demo</code> target depends on three object files (each of which can be built with its own implicit target as specified). Make processes dependencies recursively; if particular dependency has an associated target, the Make utility will (re)build the dependency's target before processing the parent target, ensuring that all dependencies are up to date before the parent target is processed. Thus, for our sample makefile, the command <code>make demo</code> actually behaves more like <code>make demo.o ; make vector.o ; make map.o ; make demo</code> (the recursion ends at dependencies which don't have an associated target; this occurs if, for example, we're depending on a source file like <code>demo.c</code>, as is the case with the <code>demo.o</code> target). The Make utility will then examine the timestamps of each file on which the parent target depends, and will build the parent target if any of these files have been changed more recently than the parent file (or if the parent file does not yet exist). In our case, this means that if the <code>demo</code> executable already exists in our directory, <code>make demo</code> will not do anything unless the directory's object files need to be rebuilt during recursive dependency processing, which in turn will only occur if any of our source files (<code>demo.c</code>, <code>vector.c</code>, <code>map.c</code>) have been modified more recently than their associated object file was built. Thus if we haven't modified any of our source files, invoking <code>make demo</code> repeatedly will only build the <code>demo</code> executable once. Furthermore, if we modify just one of our source files, we will only rebuild the associated object file, rather than all three object files.</p>
+<p>Finally, each target has an associated command, which will be run in the shell in order to build the target. Generally, this is a command which invokes the compiler, but technically it can be any command which creates a file with the target's name. When defining the command for a target, we also have access to a number of special macros, such as <code>$@</code> and <code>$^</code> above. We can see now that these macros evaluate, respectively, to the name of the current target and its list of dependencies. Other such target-dependent macros exist, and information on them is available in the Make documentation.</p>
+<p><strong>Phony targets</strong> Note that the <code>clean</code> target in our sample Makefile doesn't actually create a file named 'clean', and thus doesn't fit the pattern which we've been describing for targets. Rather, the <code>clean</code> target is used as a shortcut for running a command which clears out the project's build files (the '@' at the beginning of the command tells Make not to print it to the terminal when it is being run). We flag targets like this by listing them as "dependencies" of <code>.PHONY</code>, which is a pseudo-target that we'll never actually build. When the Make utility encounters a phony target, it will run the associated command automatically, without performing any dependency checks.</p>
+<h1 id="going-further">Going further</h1>
+<p>There's plenty more that you can do with a makefile, and a few more advanced syntactic elements. An inexhaustible source of make wisdom is the <a href="http://www.gnu.org/software/make/">full manual for GNU Make</a> which will tell you more that you could ever want to know. Checking out makefiles from some real world projects is another interesting way to see make in action.</p>
+<h1 id="faq">Common questions about make</h1>
+<h4 id="make-is-failing-with-a-cryptic-error-about-makefile-missing-separator-huh">Make is failing with a cryptic error about <code>Makefile: *** missing separator.</code> Huh?</h4>
+<p>In what is widely considered one of the dumber decisions in the history of computing, make distinguishes between tabs and spaces in a Makefile. The command lines for a target must begin with a <strong>tab</strong> and an equivalent number of spaces just won't do. Edit your makefile and replace those errant spaces with a tab to restore Makefile joy.</p>
+<h4 id="the-compiler-warnings-from-my-build-seem-a-bit-garbled-is-there-something-i-can-do-to-get-readable-messages-see-sample-warning-below-complete-with-funny-characters">The compiler warnings from my build seem a bit garbled, is there something I can do to get readable messages? See sample warning below complete with funny characters:</h4>
+<p><pre markdown=1>
+myprogram.c: In function &acirc;:
+myprogram.c:48:5: error: expected &acirc; before &acirc; token
+</pre></p>
+<p>This mismatch is due to gcc getting all fancy and printing identifiers enclosed in curly "smart quotes", but those unusual characters are not meshing well with the language configuration of your terminal. If you set the environment variable <code>LC_ALL</code> to <code>C</code>, gcc will dumb down its output. Set in your <a href="/class/archive/cs/cs107/cs107.1186/guide/unix.html#faq">shell configuration file</a> to make the change permanent.</p>
+  </div>
+  <div class="toc-column col-lg-1 col-md-1 col-sm-1 hidden-xs">
+    <div id="toc" class="toc" data-spy="affix" data-offset-top="0"></div>
+  </div> 
+
+</div>
+
+
+  <script src="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/assets/tocbot.min.js"></script>
+  <link rel="stylesheet" href="https://web.stanford.edu/class/archive/cs/cs107/cs107.1186/assets/tocbot.css">
+
+  <script>
+    tocbot.init({
+      // Where to render the table of contents.
+      tocSelector: '#toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '#main_for_toc',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: 'h1, h2, h3',
+    });
+  </script>
+</div>
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </body>
+</html>
